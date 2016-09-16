@@ -42,7 +42,16 @@ public class RetroAPI {
 
         @FormUrlEncoded
         @POST("getquestion")
-        Observable<JsonObject> getQuestion();
+        Observable<JsonObject> getQuestion(
+                @Field("questionid") String questionId
+        );
+
+        @FormUrlEncoded
+        @POST("answer")
+        Observable<JsonObject> answer(
+                @Field("questionid") String questionID,
+                @Field("answer") String answer
+        );
     }
 
     private static Interceptor interceptor = new Interceptor() {
@@ -51,7 +60,7 @@ public class RetroAPI {
             Request original = chain.request();
 
             Request request = new Request.Builder()
-                    .addHeader("access-token", Data.AccessToken)
+                    .addHeader("accesstoken", Data.AccessToken)
                     .method(original.method(), original.body())
                     .build();
 
