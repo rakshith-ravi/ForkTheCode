@@ -14,7 +14,13 @@ import com.csivit.rakshith.forkthecode.R;
 import com.csivit.rakshith.forkthecode.model.Data;
 import com.csivit.rakshith.forkthecode.model.LocationService;
 import com.csivit.rakshith.forkthecode.model.RetroAPI;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.gson.JsonObject;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -22,12 +28,13 @@ import rx.schedulers.Schedulers;
 
 public class HomeActivity extends AppCompatActivity {
 
-    //private GoogleMap googleMap;
-    //private MapView mapView;
+    private GoogleMap googleMap;
+    private MapView mapView;
     private EditText answerText;
     private TextView questionText;
     private TextView clueText;
     private LocationService locationService;
+    private Timer timer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,7 +44,14 @@ public class HomeActivity extends AppCompatActivity {
         questionText = (TextView) findViewById(R.id.question);
         clueText = (TextView) findViewById(R.id.clue);
         locationService = new LocationService(this);
-        /*
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // TODO send location to server and shit
+
+            }
+        }, 0, 1000 * 5 /* 5 minutes*/);
         mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
@@ -46,31 +60,30 @@ public class HomeActivity extends AppCompatActivity {
                 HomeActivity.this.googleMap = googleMap;
             }
         });
-        */
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //mapView.onResume();
+        mapView.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //mapView.onPause();
+        mapView.onPause();
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        //mapView.onLowMemory();
+        mapView.onLowMemory();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //mapView.onDestroy();
+        mapView.onDestroy();
     }
 
     public void onSubmitAnswer(View view) {

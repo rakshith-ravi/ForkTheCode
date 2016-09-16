@@ -5,16 +5,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@android:color/black"/>
-    <!--com.google.android.gms.maps.MapView
+    <com.google.android.gms.maps.MapView
         android:id="@+id/map"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"/-->
+        android:layout_weight="1" />
 
     <ScrollView
         android:layout_width="match_parent"

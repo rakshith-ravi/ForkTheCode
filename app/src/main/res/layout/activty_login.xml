@@ -47,5 +47,6 @@
         android:layout_centerHorizontal="true"
         android:background="@color/colorPrimary"
         android:textColor="@android:color/white"
-        android:text="@string/login"/>
+        android:text="@string/login"
+        android:onClick="onLogin"/>
 </RelativeLayout>
