@@ -1,15 +1,13 @@
 <resources>
     <string name="app_name">Fork The Code</string>
     <string name="sign_up">Sign Up</string>
-    <string name="username">Username</string>
-    <string name="email_address">Email Address</string>
     <string name="password">Password</string>
     <string name="logo">Logo</string>
     <string name="already_have_an_account_login">Already have an account? Login</string>
     <string name="login">Login</string>
-    <string name="username_or_email">Username or Email</string>
     <string name="join_team">Join Team</string>
     <string name="create_team">Create Team</string>
     <string name="welcome">Welcome</string>
     <string name="your_answer">Your answer</string>
+    <string name="registration_number">Registration Number</string>
 </resources>

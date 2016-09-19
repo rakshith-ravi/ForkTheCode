@@ -3,14 +3,17 @@ package com.csivit.rakshith.forkthecode.activities;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.csivit.rakshith.forkthecode.R;
+import com.csivit.rakshith.forkthecode.model.Constants;
 import com.csivit.rakshith.forkthecode.model.Data;
 import com.csivit.rakshith.forkthecode.model.LocationService;
 import com.csivit.rakshith.forkthecode.model.RetroAPI;
@@ -28,13 +31,9 @@ import rx.schedulers.Schedulers;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private GoogleMap googleMap;
-    private MapView mapView;
     private EditText answerText;
     private TextView questionText;
     private TextView clueText;
-    private LocationService locationService;
-    private Timer timer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,47 +42,12 @@ public class HomeActivity extends AppCompatActivity {
         answerText = (EditText) findViewById(R.id.answer);
         questionText = (TextView) findViewById(R.id.question);
         clueText = (TextView) findViewById(R.id.clue);
-        locationService = new LocationService(this);
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                // TODO send location to server and shit
-
-            }
-        }, 0, 1000 * 5 /* 5 minutes*/);
-        mapView = (MapView) findViewById(R.id.map);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                HomeActivity.this.googleMap = googleMap;
-            }
-        });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mapView.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mapView.onPause();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mapView.onDestroy();
+        Data.save();
     }
 
     public void onSubmitAnswer(View view) {
@@ -104,15 +68,14 @@ public class HomeActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        Log.e(Constants.LOG_TAG, Log.getStackTraceString(e));
                     }
 
                     @Override
                     public void onNext(JsonObject jsonObject) {
                         boolean success = jsonObject.get("success").getAsBoolean();
                         if(success) {
-                            // TODO Get new question and stuff
-                            RetroAPI.NetworkCalls.getQuestion(jsonObject.get("nextquestionid").getAsString())
+                            RetroAPI.NetworkCalls.getQuestion(jsonObject.get("nextquestion").getAsString())
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(new Observer<JsonObject>() {
@@ -123,7 +86,7 @@ public class HomeActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onError(Throwable e) {
-
+                                            Log.e(Constants.LOG_TAG, Log.getStackTraceString(e));
                                         }
 
                                         @Override
@@ -131,7 +94,14 @@ public class HomeActivity extends AppCompatActivity {
                                             Data.setQuestion(jsonObject.get("questionid").getAsString(), jsonObject.get("question").getAsString());
                                             Data.setClue(jsonObject.get("clue").getAsString());
                                             questionText.setText(Data.getQuestion());
+                                            clueText.setText(Data.getClue());
                                             progressDialog.dismiss();
+                                            Data.setMapActivity(true);
+                                            Intent intent = new Intent(HomeActivity.this, MapActivity.class)
+                                                    .putExtra(Constants.LATITUDE_KEY, jsonObject.get("lat").getAsDouble())
+                                                    .putExtra(Constants.LONGITUDE_KEY, jsonObject.get("lng").getAsDouble())
+                                                    .putExtra("char", jsonObject.get("char").toString());
+                                            startActivity(intent);
                                         }
                                     });
                         } else {

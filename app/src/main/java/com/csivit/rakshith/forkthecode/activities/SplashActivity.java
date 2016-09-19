@@ -21,11 +21,32 @@ public class SplashActivity extends AppCompatActivity {
         super.onStart();
         if(Data.isLoggedIn()) {
             // open main activity
+            if(Data.isJoinedTeam()) {
+                if(Data.isMapActivity()) {
+                    Intent intent = new Intent(this, MapActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Intent intent = new Intent(this, HomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            } else {
+                Intent intent = new Intent(this, TeamActivity.class);
+                startActivity(intent);
+                finish();
+            }
         } else {
             // open sign up activity
-            Intent intent = new Intent(this, SignUpActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Data.save();
     }
 }

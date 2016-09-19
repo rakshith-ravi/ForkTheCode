@@ -28,17 +28,39 @@ public class RetroAPI {
                 @Field("password") String password
         );
 
+        /*
+        [
+            {
+                teamname: alsjd;jhfawe f
+                user1: 15bed5430
+                user2: 15lsg5440
+                user3: 15wla6306 / null
+            },
+            {
+                teamname: alsjd;jhfawe f
+                user1: 15bed5430
+                user2: 15lsg5440
+                user3: 15wla6306 / null
+            }
+        ]
+         */
         @FormUrlEncoded
-        @POST("signup")
-        Observable<JsonObject> signUp(
-                @Field("email") String email,
-                @Field("username") String username,
+        @POST("getteams")
+        Observable<JsonArray> getTeams();
+
+        @FormUrlEncoded
+        @POST("createteam")
+        Observable<JsonObject> createTeam(
+                @Field("teamname") String teamName,
                 @Field("password") String password
         );
 
         @FormUrlEncoded
-        @POST("getteams")
-        Observable<JsonArray> getTeams();
+        @POST("jointeam")
+        Observable<JsonObject> joinTeam(
+                @Field("teamname") String teamName,
+                @Field("password") String password
+        );
 
         @FormUrlEncoded
         @POST("getquestion")
@@ -60,7 +82,7 @@ public class RetroAPI {
             Request original = chain.request();
 
             Request request = new Request.Builder()
-                    .addHeader("accesstoken", Data.AccessToken)
+                    .addHeader("Authorization", "JWT " + Data.AuthToken)
                     .method(original.method(), original.body())
                     .build();
 
