@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +43,7 @@ public class HomeActivity extends AppCompatActivity {
         answerText = (EditText) findViewById(R.id.answer);
         questionText = (TextView) findViewById(R.id.question);
         clueText = (TextView) findViewById(R.id.clue);
+        questionText.setText(Data.getQuestion());
     }
 
     @Override
@@ -51,13 +53,16 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void onSubmitAnswer(View view) {
-        final AlertDialog progressDialog = new ProgressDialog.Builder(this)
-                .setMessage("Checking your answer")
-                .setTitle("Checking")
-                .setCancelable(false)
-                .show();
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Checking your answer");
+        progressDialog.setTitle("Checking");
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.show();
         String answer = answerText.getText().toString();
-        RetroAPI.NetworkCalls.answer(Data.getQuestionID(), answer)
+        String token = "Token " + Data.AuthToken;
+        RetroAPI.NetworkCalls.answer(token.replaceAll("\"", ""), Data.getQuestionID(), answer)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JsonObject>() {
@@ -68,6 +73,7 @@ public class HomeActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
+                        progressDialog.dismiss();
                         Log.e(Constants.LOG_TAG, Log.getStackTraceString(e));
                     }
 
@@ -75,35 +81,23 @@ public class HomeActivity extends AppCompatActivity {
                     public void onNext(JsonObject jsonObject) {
                         boolean success = jsonObject.get("success").getAsBoolean();
                         if(success) {
-                            RetroAPI.NetworkCalls.getQuestion(jsonObject.get("nextquestion").getAsString())
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(new Observer<JsonObject>() {
-                                        @Override
-                                        public void onCompleted() {
-
-                                        }
-
-                                        @Override
-                                        public void onError(Throwable e) {
-                                            Log.e(Constants.LOG_TAG, Log.getStackTraceString(e));
-                                        }
-
-                                        @Override
-                                        public void onNext(JsonObject jsonObject) {
-                                            Data.setQuestion(jsonObject.get("questionid").getAsString(), jsonObject.get("question").getAsString());
-                                            Data.setClue(jsonObject.get("clue").getAsString());
-                                            questionText.setText(Data.getQuestion());
-                                            clueText.setText(Data.getClue());
-                                            progressDialog.dismiss();
-                                            Data.setMapActivity(true);
-                                            Intent intent = new Intent(HomeActivity.this, MapActivity.class)
-                                                    .putExtra(Constants.LATITUDE_KEY, jsonObject.get("lat").getAsDouble())
-                                                    .putExtra(Constants.LONGITUDE_KEY, jsonObject.get("lng").getAsDouble())
-                                                    .putExtra("char", jsonObject.get("char").toString());
-                                            startActivity(intent);
-                                        }
-                                    });
+                            Log.e(Constants.LOG_TAG, Data.AuthToken);
+                            Data.setQuestion(jsonObject.get("questionid").getAsString(), jsonObject.get("question").getAsString());
+                            questionText.setText(Data.getQuestion());
+                            clueText.setText(Data.getClue());
+                            progressDialog.dismiss();
+                            Data.setMapActivity(true);
+                            Location location = new Location("");
+                            location.setLatitude(jsonObject.get("lat").getAsDouble());
+                            location.setLongitude(jsonObject.get("long").getAsDouble());
+                            Data.setLocation(location);
+                            Data.setClue(jsonObject.get("letter").toString());
+                            Data.save();
+                            Intent intent = new Intent(HomeActivity.this, MapActivity.class)
+                                    .putExtra(Constants.LATITUDE_KEY, location.getLatitude())
+                                    .putExtra(Constants.LONGITUDE_KEY, location.getLongitude())
+                                    .putExtra(Constants.CLUE_KEY, Data.getClue());
+                            startActivity(intent);
                         } else {
                             progressDialog.dismiss();
                             new AlertDialog.Builder(HomeActivity.this)

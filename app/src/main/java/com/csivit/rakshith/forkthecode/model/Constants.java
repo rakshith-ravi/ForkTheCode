@@ -7,7 +7,7 @@ public class Constants {
     public static final String JOINED_TEAM_KEY = "joinedTeam";
     public static final String USERNAME_KEY = "username";
     public static final String LOG_TAG = "ForkTheCode";
-    public static final String BaseURL = "ftc.csivit.com";
+    public static final String BaseURL = "https://ftc-backend-hitesh0801.c9users.io/";
     public static final String QUESTION_ID_KEY = "questionId";
     public static final String AUTH_TOKEN_KEY = "auth-token";
     public static final String QUESTION_KEY = "question";

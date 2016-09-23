@@ -14,6 +14,7 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import rx.Observable;
 
@@ -45,7 +46,7 @@ public class RetroAPI {
         ]
          */
         @FormUrlEncoded
-        @POST("getteams")
+        @POST("profile")
         Observable<JsonArray> getTeams();
 
         @FormUrlEncoded
@@ -63,7 +64,7 @@ public class RetroAPI {
         );
 
         @FormUrlEncoded
-        @POST("getquestion")
+        @POST("question")
         Observable<JsonObject> getQuestion(
                 @Field("questionid") String questionId
         );
@@ -71,6 +72,7 @@ public class RetroAPI {
         @FormUrlEncoded
         @POST("answer")
         Observable<JsonObject> answer(
+                @Header("Authorization") String token,
                 @Field("questionid") String questionID,
                 @Field("answer") String answer
         );
@@ -79,14 +81,13 @@ public class RetroAPI {
     private static Interceptor interceptor = new Interceptor() {
         @Override
         public Response intercept(Chain chain) throws IOException {
-            Request original = chain.request();
-
-            Request request = new Request.Builder()
-                    .addHeader("Authorization", "JWT " + Data.AuthToken)
-                    .method(original.method(), original.body())
+            Request newRequest = chain
+                    .request()
+                    .newBuilder()
+                    .addHeader("Authorization", "Token             " + Data.AuthToken)
                     .build();
 
-            return chain.proceed(request);
+            return chain.proceed(newRequest);
         }
     };
 
@@ -98,7 +99,7 @@ public class RetroAPI {
             .baseUrl(Constants.BaseURL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .client(client)
+            //.client(client)
             .build()
             .create(NetworkService.class);
 }

@@ -15,39 +15,35 @@
         android:layout_height="wrap_content"
         android:text="Inventory: A, B, C, D, E"/>
 
-    <TextView
-        android:id="@+id/question"
-        android:layout_width="wrap_content"
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:textSize="24sp"
-        android:textColor="@color/colorPrimary"
-        android:text="How much wood would a wood chuck chuck if a wood chuck would chuck wood?"/>
+        android:layout_above="@id/answer">
 
-    <TextView
-        android:id="@+id/clue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/question"
-        android:layout_marginTop="16dp"
-        android:textColor="@color/colorPrimary"
-        android:text="Clue: Your mom"/>
+        <TextView
+            android:id="@+id/question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimary"
+            android:text="How much wood would a wood chuck chuck if a wood chuck would chuck wood?"/>
+    </ScrollView>
 
     <EditText
         android:id="@+id/answer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/clue"
         android:layout_marginTop="24dp"
+        android:layout_centerVertical="true"
         android:hint="@string/your_answer"/>
 
     <Button
         android:id="@+id/submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/answer"
-        android:layout_marginTop="12dp"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:background="@color/colorPrimary"

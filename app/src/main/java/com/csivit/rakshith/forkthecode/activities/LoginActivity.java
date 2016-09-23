@@ -42,11 +42,13 @@ public class LoginActivity extends AppCompatActivity {
          */
         EditText username = (EditText) findViewById(R.id.registration_number);
         EditText password = (EditText) findViewById(R.id.password);
-        final AlertDialog progressDialog = new ProgressDialog.Builder(this)
-                .setMessage("Logging you in. Please wait")
-                .setTitle("Logging in")
-                .setCancelable(false)
-                .create();
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Checking your answer");
+        progressDialog.setTitle("Checking");
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.show();
         progressDialog.show();
         RetroAPI.NetworkCalls.login(username.getText().toString(), password.getText().toString())
                 .subscribeOn(Schedulers.io())
@@ -70,14 +72,10 @@ public class LoginActivity extends AppCompatActivity {
                             Data.AuthToken = jsonObject.get("authtoken").toString();
                             Data.setQuestion(jsonObject.get("questionid").toString(), jsonObject.get("question").toString());
                             Data.setLoggedIn(true);
-                            Data.setJoinedTeam(jsonObject.get("joinedteam").getAsBoolean());
+                            Data.setJoinedTeam(true);
                             Data.save();
                             if(Data.isJoinedTeam()) {
                                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                startActivity(intent);
-                                finish();
-                            } else {
-                                Intent intent = new Intent(LoginActivity.this, TeamActivity.class);
                                 startActivity(intent);
                                 finish();
                             }
@@ -97,9 +95,6 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
-        Intent intent = new Intent(this, TeamActivity.class);
-        startActivity(intent);
-        Data.setLoggedIn(true);
     }
 
     @Override

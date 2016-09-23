@@ -1,10 +1,13 @@
 package com.csivit.rakshith.forkthecode.activities;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -51,10 +54,14 @@ public class MapActivity extends AppCompatActivity {
                 googleMap.clear();
                 googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Your clue is waiting here :P"));
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17));
+                if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                googleMap.setMyLocationEnabled(true);
             }
         });
         locationService = new LocationService(this);
-        Subscription subscription = Observable.interval(Constants.LOCATION_INTERVAL, TimeUnit.MILLISECONDS)
+        Subscription subscription = Observable.interval(2, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Long>() {
@@ -71,7 +78,10 @@ public class MapActivity extends AppCompatActivity {
                     @Override
                     public void onNext(Long aLong) {
                         Location currentLocation = locationService.getLocation();
-                        if(currentLocation.distanceTo(location) < 10) {
+                        Log.e(Constants.LOG_TAG, "Getting location " + currentLocation.toString());
+                        Log.e(Constants.LOG_TAG, "Go to location " + location.toString());
+                        Log.e(Constants.LOG_TAG, currentLocation.distanceTo(location) + "");
+                        if (currentLocation.distanceTo(location) < 50) {
                             TextView textView = new TextView(MapActivity.this);
                             textView.setText(getIntent().getStringExtra("char"));
                             textView.setTextSize(48);

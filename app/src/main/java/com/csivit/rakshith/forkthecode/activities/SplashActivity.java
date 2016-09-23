@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.csivit.rakshith.forkthecode.R;
+import com.csivit.rakshith.forkthecode.model.Constants;
 import com.csivit.rakshith.forkthecode.model.Data;
 
 public class SplashActivity extends AppCompatActivity {
@@ -23,7 +24,10 @@ public class SplashActivity extends AppCompatActivity {
             // open main activity
             if(Data.isJoinedTeam()) {
                 if(Data.isMapActivity()) {
-                    Intent intent = new Intent(this, MapActivity.class);
+                    Intent intent = new Intent(this, MapActivity.class)
+                            .putExtra(Constants.LATITUDE_KEY, Data.getLocation().getLatitude())
+                            .putExtra(Constants.LONGITUDE_KEY, Data.getLocation().getLongitude())
+                            .putExtra(Constants.CLUE_KEY, Data.getClue());
                     startActivity(intent);
                     finish();
                 } else {
