@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -21,20 +22,25 @@ import com.csivit.rakshith.forkthecode.model.RetroAPI;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import rx.Observer;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 public class HomeActivity extends AppCompatActivity {
 
     private EditText answerText;
     private TextView questionText;
     private TextView clueText;
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,7 +48,8 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         answerText = (EditText) findViewById(R.id.answer);
         questionText = (TextView) findViewById(R.id.question);
-        clueText = (TextView) findViewById(R.id.clue);
+        clueText = (TextView) findViewById(R.id.inventory);
+        clueText.setText("Inventory: " + Arrays.toString(Data.getClue().toCharArray()));
         questionText.setText(Data.getQuestion());
     }
 
@@ -57,10 +64,10 @@ public class HomeActivity extends AppCompatActivity {
         progressDialog.setMessage("Checking your answer");
         progressDialog.setTitle("Checking");
         progressDialog.setCancelable(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.show();
-        String answer = answerText.getText().toString();
+        String answer = answerText.getText().toString().toLowerCase().replaceAll("\\.", "").replaceAll("\\-", "").replaceAll("\"", "");
         String token = "Token " + Data.AuthToken;
         RetroAPI.NetworkCalls.answer(token.replaceAll("\"", ""), Data.getQuestionID(), answer)
                 .subscribeOn(Schedulers.io())
@@ -91,13 +98,14 @@ public class HomeActivity extends AppCompatActivity {
                             location.setLatitude(jsonObject.get("lat").getAsDouble());
                             location.setLongitude(jsonObject.get("long").getAsDouble());
                             Data.setLocation(location);
-                            Data.setClue(jsonObject.get("letter").toString());
+                            Data.setClue(Data.getClue() + jsonObject.get("letter").toString().replaceAll("\"", ""));
                             Data.save();
                             Intent intent = new Intent(HomeActivity.this, MapActivity.class)
                                     .putExtra(Constants.LATITUDE_KEY, location.getLatitude())
                                     .putExtra(Constants.LONGITUDE_KEY, location.getLongitude())
-                                    .putExtra(Constants.CLUE_KEY, Data.getClue());
+                                    .putExtra(Constants.CLUE_KEY, jsonObject.get("letter").toString().replaceAll("\"", ""));
                             startActivity(intent);
+                            finish();
                         } else {
                             progressDialog.dismiss();
                             new AlertDialog.Builder(HomeActivity.this)
@@ -114,5 +122,58 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    public void onLeaderboard(View view) {
+        final ProgressDialog progressDialog = new ProgressDialog(HomeActivity.this);
+        progressDialog.setMessage("Getting list of teams");
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Leaderboard");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        Log.e(Constants.LOG_TAG, Data.AuthToken);
+        Subscription subscription = RetroAPI.NetworkCalls.getTeams("Token " + Data.AuthToken.replaceAll("\"", ""))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JsonArray>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        progressDialog.dismiss();
+                        Log.e(Constants.LOG_TAG, Log.getStackTraceString(e));
+                    }
+
+                    @Override
+                    public void onNext(final JsonArray jsonElements) {
+                        progressDialog.dismiss();
+                        ArrayAdapter<String> teamsAdapter = new ArrayAdapter<>(HomeActivity.this, android.R.layout.select_dialog_item);
+                        for(int j = 0; j < jsonElements.size(); j++) {
+                            teamsAdapter.add(jsonElements.get(j).getAsJsonObject().get("name").toString().replaceAll("\"", "") + " - " + jsonElements.get(j).getAsJsonObject().get("question_attempted").toString().replaceAll("\"", ""));
+                        }
+                        new android.support.v7.app.AlertDialog.Builder(HomeActivity.this)
+                                .setTitle("Leaderboard")
+                                .setAdapter(teamsAdapter, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(final DialogInterface dialogInterface, final int i) {
+
+                                    }
+                                })
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.dismiss();
+                                    }
+                                })
+                                .setCancelable(true)
+                                .create()
+                                .show();
+                    }
+                });
+        subscriptions.add(subscription);
     }
 }

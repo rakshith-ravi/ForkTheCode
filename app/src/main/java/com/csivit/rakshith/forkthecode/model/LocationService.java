@@ -20,15 +20,14 @@ public class LocationService implements LocationListener {
     private Location location;
 
     public LocationService(Context context) {
-        locationManager = (LocationManager) context
-                .getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         provider = locationManager.getBestProvider(criteria, true);
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 0, this);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3, 10, this);
         setMostRecentLocation(locationManager.getLastKnownLocation(provider));
     }
 

@@ -11,9 +11,18 @@
     android:paddingTop="@dimen/activity_vertical_margin">
 
     <TextView
+        android:id="@+id/inventory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Inventory: A, B, C, D, E"/>
+        android:text="Inventory: "/>
+
+    <EditText
+        android:id="@+id/answer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_centerVertical="true"
+        android:hint="@string/your_answer"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -31,14 +40,6 @@
             android:text="How much wood would a wood chuck chuck if a wood chuck would chuck wood?"/>
     </ScrollView>
 
-    <EditText
-        android:id="@+id/answer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_centerVertical="true"
-        android:hint="@string/your_answer"/>
-
     <Button
         android:id="@+id/submit"
         android:layout_width="wrap_content"
@@ -50,4 +51,16 @@
         android:textColor="@android:color/white"
         android:text="Submit"
         android:onClick="onSubmitAnswer"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Leaderboard"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:padding="12dp"
+        android:onClick="onLeaderboard"/>
 </RelativeLayout>

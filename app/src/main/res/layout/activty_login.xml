@@ -22,16 +22,6 @@
         android:text="Fork In"/>
 
     <EditText
-        android:id="@+id/registration_number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/password"
-        android:gravity="center"
-        android:inputType="text"
-        android:hint="Team Name"
-        tools:ignore="TextFields" />
-
-    <EditText
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,6 +30,16 @@
         android:layout_marginTop="8dp"
         android:inputType="textPassword"
         android:hint="@string/password"/>
+
+    <EditText
+        android:id="@+id/registration_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/password"
+        android:gravity="center"
+        android:inputType="text"
+        android:hint="Team Name"
+        tools:ignore="TextFields" />
 
     <Button
         android:id="@+id/login"

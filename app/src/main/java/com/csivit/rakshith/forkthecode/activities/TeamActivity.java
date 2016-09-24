@@ -106,7 +106,7 @@ public class TeamActivity extends AppCompatActivity {
                 .setTitle("Join team")
                 .setCancelable(false)
                 .show();
-        Subscription subscription = RetroAPI.NetworkCalls.getTeams()
+        Subscription subscription = RetroAPI.NetworkCalls.getTeams(Data.AuthToken.replaceAll("\"", ""))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<JsonArray>() {

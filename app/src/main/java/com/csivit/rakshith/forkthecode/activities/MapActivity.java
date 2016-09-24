@@ -1,6 +1,7 @@
 package com.csivit.rakshith.forkthecode.activities;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -8,8 +9,11 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.csivit.rakshith.forkthecode.R;
@@ -40,6 +44,7 @@ public class MapActivity extends AppCompatActivity {
     private Location location;
     private LocationService locationService;
     private CompositeSubscription subscriptions = new CompositeSubscription();
+    private String letter = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,7 +57,7 @@ public class MapActivity extends AppCompatActivity {
             public void onMapReady(GoogleMap googleMap) {
                 MapActivity.this.googleMap = googleMap;
                 googleMap.clear();
-                googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Your clue is waiting here :P"));
+                googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Your clue is waiting here"));
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17));
                 if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     return;
@@ -77,37 +82,36 @@ public class MapActivity extends AppCompatActivity {
 
                     @Override
                     public void onNext(Long aLong) {
-                        Location currentLocation = locationService.getLocation();
-                        Log.e(Constants.LOG_TAG, "Getting location " + currentLocation.toString());
-                        Log.e(Constants.LOG_TAG, "Go to location " + location.toString());
-                        Log.e(Constants.LOG_TAG, currentLocation.distanceTo(location) + "");
-                        if (currentLocation.distanceTo(location) < 50) {
-                            TextView textView = new TextView(MapActivity.this);
-                            textView.setText(getIntent().getStringExtra("char"));
-                            textView.setTextSize(48);
-                            setContentView(textView);
-                            Subscription timerSubscription = Observable.timer(3, TimeUnit.SECONDS)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(new Observer<Long>() {
-                                        @Override
-                                        public void onCompleted() {
-
-                                        }
-
-                                        @Override
-                                        public void onError(Throwable e) {
-                                            Log.e(Constants.LOG_TAG, Log.getStackTraceString(e));
-                                        }
-
-                                        @Override
-                                        public void onNext(Long aLong) {
-                                            Data.setMapActivity(false);
-                                            Data.save();
-                                            finish();
-                                        }
-                                    });
-                            subscriptions.add(timerSubscription);
+                        try {
+                            Location currentLocation = locationService.getLocation();
+                            Log.e(Constants.LOG_TAG, "Getting location " + currentLocation.toString());
+                            Log.e(Constants.LOG_TAG, "Go to location " + location.toString());
+                            double dx, dy;
+                            dx = location.getLatitude() - currentLocation.getLatitude();
+                            dy = location.getLongitude() - currentLocation.getLongitude();
+                            double meterPerDegree = (2 * Math.PI * 6400000) / (360d * 5);
+                            double distance = Math.sqrt((dx * dx) + (dy * dy)) * meterPerDegree;
+                            Log.e(Constants.LOG_TAG, distance + "");
+                            if (distance < 50) {
+                                new AlertDialog.Builder(MapActivity.this)
+                                        .setMessage("Your clue: " + getIntent().getStringExtra(Constants.CLUE_KEY))
+                                        .setTitle("Congratulations!")
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Data.setMapActivity(false);
+                                                Data.save();
+                                                dialog.dismiss();
+                                                Intent intent = new Intent(MapActivity.this, HomeActivity.class);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                        })
+                                        .create()
+                                        .show();
+                            }
+                        } catch (Exception ex) {
+                            Log.e(Constants.LOG_TAG, Log.getStackTraceString(ex));
                         }
                     }
                 });
@@ -155,5 +159,45 @@ public class MapActivity extends AppCompatActivity {
         super.onDestroy();
         mapView.onDestroy();
         subscriptions.unsubscribe();
+    }
+
+    public void onPassword(View view) {
+        final EditText editText = new EditText(this);
+        editText.setHint("Password");
+        new AlertDialog.Builder(this)
+                .setTitle("Enter the password")
+                .setView(editText)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.e(Constants.LOG_TAG, Data.getQuestionID());
+                        if(Data.getQuestionID().equals(editText.getText().toString())) {
+                            new AlertDialog.Builder(MapActivity.this)
+                                    .setMessage("Your clue: " + getIntent().getStringExtra(Constants.CLUE_KEY))
+                                    .setTitle("Your clue!")
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Data.setMapActivity(false);
+                                            Data.save();
+                                            dialog.dismiss();
+                                            Intent intent = new Intent(MapActivity.this, HomeActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    })
+                                    .create()
+                                    .show();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create()
+                .show();
     }
 }

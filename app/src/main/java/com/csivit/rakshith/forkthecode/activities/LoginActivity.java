@@ -43,11 +43,11 @@ public class LoginActivity extends AppCompatActivity {
         EditText username = (EditText) findViewById(R.id.registration_number);
         EditText password = (EditText) findViewById(R.id.password);
         final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Checking your answer");
-        progressDialog.setTitle("Checking");
+        progressDialog.setMessage("Logging you in");
+        progressDialog.setTitle("Logging in");
         progressDialog.setCancelable(false);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.show();
         progressDialog.show();
         RetroAPI.NetworkCalls.login(username.getText().toString(), password.getText().toString())

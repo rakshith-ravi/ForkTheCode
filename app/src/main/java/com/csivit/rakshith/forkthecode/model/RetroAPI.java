@@ -45,9 +45,10 @@ public class RetroAPI {
             }
         ]
          */
-        @FormUrlEncoded
         @POST("profile")
-        Observable<JsonArray> getTeams();
+        Observable<JsonArray> getTeams(
+                @Header("Authorization") String token
+        );
 
         @FormUrlEncoded
         @POST("createteam")
@@ -66,6 +67,7 @@ public class RetroAPI {
         @FormUrlEncoded
         @POST("question")
         Observable<JsonObject> getQuestion(
+                @Header("Authorization") String token,
                 @Field("questionid") String questionId
         );
 

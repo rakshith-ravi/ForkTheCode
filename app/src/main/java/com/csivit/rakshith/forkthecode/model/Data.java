@@ -17,19 +17,17 @@ public class Data {
     private static String question;
     private static String clue;
     private static Location location;
-    private static String inventory;
 
     public static void initialize(Context context) {
         sharedPreferences = context.getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE);
         loggedIn = sharedPreferences.getBoolean(Constants.LOGGED_IN_KEY, false);
         joinedTeam = sharedPreferences.getBoolean(Constants.JOINED_TEAM_KEY, false);
         mapActivity = sharedPreferences.getBoolean(Constants.MAP_ACTIVITY_KEY, false);
-        AuthToken = sharedPreferences.getString(Constants.AUTH_TOKEN_KEY, "null");
+        AuthToken = sharedPreferences.getString(Constants.AUTH_TOKEN_KEY, "");
         username = sharedPreferences.getString(Constants.USERNAME_KEY, "");
-        questionID = sharedPreferences.getString(Constants.QUESTION_ID_KEY, "null");
-        question = sharedPreferences.getString(Constants.QUESTION_KEY, "null");
-        clue = sharedPreferences.getString(Constants.CLUE_KEY, null);
-        inventory = sharedPreferences.getString(Constants.INVENTORY_KEY, "");
+        questionID = sharedPreferences.getString(Constants.QUESTION_ID_KEY, "");
+        question = sharedPreferences.getString(Constants.QUESTION_KEY, "");
+        clue = sharedPreferences.getString(Constants.CLUE_KEY, "");
         location = new Location("SharedPreferences");
         location.setLatitude(Double.longBitsToDouble(sharedPreferences.getLong(Constants.LATITUDE_KEY, -1L)));
         location.setLongitude(Double.longBitsToDouble(sharedPreferences.getLong(Constants.LONGITUDE_KEY, -1L)));
@@ -45,7 +43,6 @@ public class Data {
                 .putString(Constants.AUTH_TOKEN_KEY, AuthToken)
                 .putString(Constants.QUESTION_KEY, question)
                 .putString(Constants.CLUE_KEY, clue)
-                .putString(Constants.INVENTORY_KEY, inventory)
                 .putLong(Constants.LATITUDE_KEY, Double.doubleToLongBits(location.getLatitude()))
                 .putLong(Constants.LONGITUDE_KEY, Double.doubleToLongBits(location.getLongitude()))
                 .apply();

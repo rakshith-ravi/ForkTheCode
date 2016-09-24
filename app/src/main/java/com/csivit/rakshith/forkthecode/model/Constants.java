@@ -15,6 +15,5 @@ public class Constants {
     public static final String LATITUDE_KEY = "latitude";
     public static final String LONGITUDE_KEY = "longitude";
     public static final String MAP_ACTIVITY_KEY = "mapActivity";
-    public static final String INVENTORY_KEY = "inventory";
     public static final int LOCATION_INTERVAL = 1000 * 60 * 2; // Two minutes
 }
