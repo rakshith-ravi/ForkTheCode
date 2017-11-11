@@ -86,7 +86,7 @@ public class RetroAPI {
             Request newRequest = chain
                     .request()
                     .newBuilder()
-                    .addHeader("Authorization", "Token             " + Data.AuthToken)
+                    .addHeader("Authorization", "Token " + Data.AuthToken)
                     .build();
 
             return chain.proceed(newRequest);

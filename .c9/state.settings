@@ -1,0 +1,174 @@
+{
+    "console": {
+        "@expanded": true,
+        "@height": 239,
+        "@maximized": "false",
+        "json()": {
+            "meta": {
+                "accessList": [
+                    "tab0",
+                    "tab1"
+                ]
+            },
+            "name": "pane1",
+            "nodes": [
+                {
+                    "type": "tab",
+                    "name": "tab0",
+                    "path": "",
+                    "className": [
+                        "tab0",
+                        "focus"
+                    ],
+                    "document": {
+                        "changed": false,
+                        "meta": {
+                            "timestamp": 1475362855713
+                        },
+                        "filter": true,
+                        "title": "bash - \"rakshith@rakshith-HP-Pavilion-Notebook: ~/Projects/Commercial/ForkTheCode\"",
+                        "tooltip": "bash - \"rakshith@rakshith-HP-Pavilion-Notebook: ~/Projects/Commercial/ForkTheCode\"",
+                        "terminal": {
+                            "id": "devel_676",
+                            "cwd": "",
+                            "width": 1583,
+                            "height": 213
+                        }
+                    },
+                    "editorType": "terminal",
+                    "active": true
+                },
+                {
+                    "type": "tab",
+                    "name": "tab1",
+                    "path": "",
+                    "className": [],
+                    "document": {
+                        "title": "Immediate",
+                        "changed": false,
+                        "meta": {
+                            "timestamp": 1475362855719
+                        },
+                        "filter": true
+                    },
+                    "editorType": "immediate",
+                    "active": false
+                }
+            ],
+            "skin": "editor_tab",
+            "skinset": "default",
+            "type": "pane"
+        }
+    },
+    "experiments": {
+        "@@enabled": true,
+        "@autosave": 0,
+        "@flat-dark": 0,
+        "@git": 1,
+        "@go_completion": 0,
+        "@plugin-manager": 1,
+        "@plugins": 0,
+        "@sdk": 0,
+        "@test": 0
+    },
+    "ext": {
+        "counters": {
+            "@ace": 1,
+            "@acestatus": 1,
+            "@datagrid": 1,
+            "@divider": 5,
+            "@document": 4,
+            "@form": 5,
+            "@menu": 5,
+            "@menuitem": 13,
+            "@pane": 2,
+            "@preferences": 1,
+            "@session": 3,
+            "@tab": 4,
+            "@undoManager": 4
+        }
+    },
+    "findinfiles": {
+        "@console": "true",
+        "@matchcase": "false",
+        "@regex": "false",
+        "@scope": "selection",
+        "@wholeword": "false"
+    },
+    "menus": {
+        "@minimized": "false"
+    },
+    "nak": {
+        "@installed": true
+    },
+    "panecycle": {
+        "json()": [
+            "tab0"
+        ]
+    },
+    "panels": {
+        "@active-left": "tree",
+        "commands.panel": {
+            "@enabled": "true",
+            "@name": "commands.panel"
+        },
+        "debugger": {
+            "@enabled": "true",
+            "@name": "debugger"
+        },
+        "navigate": {
+            "@enabled": "true",
+            "@name": "navigate"
+        },
+        "outline": {
+            "@enabled": "true",
+            "@name": "outline"
+        },
+        "scm": {
+            "@enabled": "true",
+            "@name": "scm"
+        },
+        "tree": {
+            "@enabled": "true",
+            "@name": "tree"
+        }
+    },
+    "projecttree": {
+        "@showfs": true,
+        "expanded": {
+            "json()": [
+                "/",
+                "/app",
+                "/app/src",
+                "/app/src/main",
+                "/app/src/main/java",
+                "/app/src/main/java/com",
+                "/app/src/main/java/com/csivit",
+                "/app/src/main/java/com/csivit/rakshith",
+                "/app/src/main/java/com/csivit/rakshith/forkthecode",
+                "/app/src/main/java/com/csivit/rakshith/forkthecode/model"
+            ]
+        }
+    },
+    "recentfiles": {
+        "json()": []
+    },
+    "tabs": {
+        "json()": {
+            "focus": "tab0",
+            "meta": {
+                "accessList": []
+            },
+            "name": "pane0",
+            "nodes": [],
+            "skin": "editor_tab",
+            "skinset": "default",
+            "type": "pane"
+        }
+    },
+    "tree_selection": {
+        "json()": [
+            "/app/src/main/java/com/csivit/rakshith/forkthecode/model/Data.java"
+        ]
+    }
+}

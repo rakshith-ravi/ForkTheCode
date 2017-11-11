@@ -100,12 +100,6 @@ public class HomeActivity extends AppCompatActivity {
                             Data.setLocation(location);
                             Data.setClue(Data.getClue() + jsonObject.get("letter").toString().replaceAll("\"", ""));
                             Data.save();
-                            Intent intent = new Intent(HomeActivity.this, MapActivity.class)
-                                    .putExtra(Constants.LATITUDE_KEY, location.getLatitude())
-                                    .putExtra(Constants.LONGITUDE_KEY, location.getLongitude())
-                                    .putExtra(Constants.CLUE_KEY, jsonObject.get("letter").toString().replaceAll("\"", ""));
-                            startActivity(intent);
-                            finish();
                         } else {
                             progressDialog.dismiss();
                             new AlertDialog.Builder(HomeActivity.this)
